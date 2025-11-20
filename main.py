@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms
-from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
+from torchvision.models import resnet101, ResNet101_Weights
 import timm
 from timm.data.mixup import Mixup
 from timm.loss import LabelSmoothingCrossEntropy
@@ -355,13 +355,13 @@ def main():
     num_classes = len(class_to_idx)
     print(f"Number of classes: {num_classes}\n")
     
-    # Initialize model - EfficientNet-B0 (lighter and faster)
-    print("Initializing EfficientNet-B0 model...")
-    model = efficientnet_b0(weights=EfficientNet_B0_Weights.IMAGENET1K_V1)
+    # Initialize model - ResNet-101
+    print("Initializing ResNet-101 model...")
+    model = resnet101(weights=ResNet101_Weights.IMAGENET1K_V2)
     
     # Modify classifier for our number of classes
-    num_features = model.classifier[1].in_features
-    model.classifier[1] = nn.Linear(num_features, num_classes)
+    num_features = model.fc.in_features
+    model.fc = nn.Linear(num_features, num_classes)
     
     model = model.to(device)
     print(f"Model parameters: {sum(p.numel() for p in model.parameters())/1e6:.2f}M\n")
